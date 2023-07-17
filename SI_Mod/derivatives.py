@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Protocol
 
 def derivative(X, t, contacts,transmission_prob, total_population,reducing_transmission,
                exposed_period, asymptomatic_period, infectious_period, isolated_period,
@@ -30,3 +31,15 @@ def derivative(X, t, contacts,transmission_prob, total_population,reducing_trans
     derivR =   (1-prob_isolated_asy)*A / asymptomatic_period + F/isolated_period
     derivD =   prob_dead *I / infectious_period
     return np.array([derivS, derivE, derivA, derivI, derivF, derivR, derivD])
+
+
+""" some modification
+    derivS = - contacts*transmission_prob * S * (I + reducing_transmission*A) / total_population
+    derivE = contacts*transmission_prob * S * (I + reducing_transmission*A) / total_population -  E/exposed_period
+    derivA = prob_asymptomatic * E / exposed_period - A / asymptomatic_period
+    derivI = (1 - prob_asymptomatic)  * E / exposed_period - I / infectious_period
+    derivF = (1 - prob_dead)* I / infectious_period - F / isolated_period + prob_isolated_asy*A/asymptomatic_period
+    derivR =   (1-prob_isolated_asy)*A / asymptomatic_period + F/isolated_period
+    derivD =   prob_dead *I / infectious_period
+    return np.array([derivS, derivE, derivA, derivI, derivF, derivR, derivD])
+    """

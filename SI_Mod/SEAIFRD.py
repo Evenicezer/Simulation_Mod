@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
 
     contacts = 10           # number of contacts in standard case
-    transmission_prob = 0.716#0.05  # transmission probability
+    transmission_prob = 0.716  # transmission probability
     exposed_period = 3       # Mean exposed period
     asymptomatic_period = 5  # Mean asymptomatic infectious period
     infectious_period = 7    # Mean infectious period
