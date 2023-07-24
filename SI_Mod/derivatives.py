@@ -16,10 +16,10 @@ def derivative(X, t, contacts,transmission_prob, total_population,reducing_trans
     @param exposed_period Mean exposed period.
     @param asymptomatic_period Mean asymptomatic infectious period.
     @param infectious_period Mean infectious period.
-    @param isolated_period Mean hospitalized period.
+    @param isolated_period Mean quarantined period.
     @param prob_asymptomatic Probability of being asymptomatic once exposed.
     @param prob_isolated Probability of being isolated once infected.
-    @param prob_dead Probability of dying once hospitalized.
+    @param prob_dead Probability of dying
     @return Returns derivative of S, E, A, I, F, R, and D at t.
     '''
     S, E, A, I, F, R, D = X

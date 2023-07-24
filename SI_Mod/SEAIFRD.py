@@ -41,7 +41,7 @@ if __name__ == "__main__":
                                              prob_dead))
 
     total_infections = total_population - solution_seaifrd[-1, 0]
-    ifr = solution_seaifrd[-1, 6] / total_infections
+
 
 
     ax.plot(t, solution_seaifrd[:, 0], label='Susceptible', linewidth=3)
