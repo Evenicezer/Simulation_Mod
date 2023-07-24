@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import integrate
-from derivatives import derivative
-
+#from derivatives import derivative
+from Derivative import derivative
 if __name__ == "__main__":
     total_population = 5000  # Total number of individuals
     E0 = 20  # Initial number of exposed individuals
@@ -18,8 +18,8 @@ if __name__ == "__main__":
     contacts = 10           # number of contacts in standard case
     transmission_prob = 0.716  # transmission probability
     exposed_period = 4.6       # Mean exposed period
-    asymptomatic_period = 5  # Mean asymptomatic infectious period
-    infectious_period = 7    # Mean infectious period
+    asymptomatic_period = 2.17  # Mean asymptomatic infectious period# reference 46 p9
+    infectious_period = 5    # Mean infectious period
     isolated_period = 10 # Mean isolation
     reducing_transmission= 0.859
     prob_asymptomatic = 0.9  # probability of being asymptomatic once exposed# reference 46 p9
@@ -27,6 +27,8 @@ if __name__ == "__main__":
     prob_dead = 0.1          # probability of dying
     test_asy= 0.135
     dev_symp= 0.135 # which makes the (1-test_asy-dev_symp)=o.73
+    prob_quarant = 0.9  # proportion from I into F(quarantine) ~1 ; 0.9? ; reference 46 p9
+    mortality_isolated= 0.015# make the rest goes to recovered# reference 58 p7
     tmax = 90  # maximum simulation day
 
     fslarge = 20
@@ -35,11 +37,17 @@ if __name__ == "__main__":
     t = np.linspace(0, tmax, (tmax+1)*10)
     fig, ax = plt.subplots(figsize=[12, 7])
 
+    #solution_seaifrd = integrate.odeint(derivative, [S0, E0, A0, I0, F0, R0, D0], t,
+     #                                  args=(contacts, transmission_prob,  total_population,reducing_transmission,
+     #                                        exposed_period, asymptomatic_period, infectious_period,
+      #                                       isolated_period, prob_asymptomatic, prob_isolated_asy,
+      #                                       prob_dead))
+
     solution_seaifrd = integrate.odeint(derivative, [S0, E0, A0, I0, F0, R0, D0], t,
                                        args=(contacts, transmission_prob,  total_population,reducing_transmission,
                                              exposed_period, asymptomatic_period, infectious_period,
-                                             isolated_period, prob_asymptomatic, prob_isolated_asy,
-                                             prob_dead))
+                                             isolated_period, prob_asymptomatic,
+                                             prob_quarant,test_asy,dev_symp,mortality_isolated))
 
     total_infections = total_population - solution_seaifrd[-1, 0]
 

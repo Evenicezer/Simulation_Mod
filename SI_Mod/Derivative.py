@@ -3,7 +3,7 @@ from typing import Protocol
 
 def derivative(X, t, contacts,transmission_prob, total_population,reducing_transmission,
                exposed_period, asymptomatic_period, infectious_period, isolated_period,
-               prob_asymptomatic, prob_isolated_asy, prob_dead,test_asy,dev_symp):
+               prob_asymptomatic,prob_quarant,test_asy,dev_symp,mortality_isolated):
     '''
     An ODE-SEAIFRD model with possibly reduced risk from asymptomatic infected individuals.
 
@@ -22,6 +22,7 @@ def derivative(X, t, contacts,transmission_prob, total_population,reducing_trans
     @param prob_dead Probability of dying
     @dev_symp proportion for asymptomatic to develop symptoms and goes to symptomatic compartment
     @param test_asy proportion that Asymptomatic individuals gets tested and found positive to be isolated
+    @param mortality_isolated the rate of COVID-19 mortality for individuals in the quarantined compartment
     @return Returns derivative of S, E, A, I, F, R, and D at t.
     '''
     S, E, A, I, F, R, D = X
@@ -29,9 +30,9 @@ def derivative(X, t, contacts,transmission_prob, total_population,reducing_trans
     derivE = contacts*transmission_prob * S * (I + reducing_transmission*A) / total_population -  E/exposed_period
     derivA = prob_asymptomatic * E / exposed_period - A / asymptomatic_period
     derivI = dev_symp  * E / exposed_period - I / infectious_period
-    derivF = (1 - prob_dead)* I / infectious_period - F / isolated_period + test_asy*A/asymptomatic_period#prob_isolated_asy*A/asymptomatic_period
-    derivR =   F/isolated_period + (1-dev_symp -test_asy)*A / asymptomatic_period #(1-prob_isolated_asy)*A / asymptomatic_period
-    derivD =   prob_dead *I / infectious_period
+    derivF =  prob_quarant* I / infectious_period - F / isolated_period + test_asy*A/asymptomatic_period  #prob_isolated_asy*A/asymptomatic_period
+    derivR =   (1-mortality_isolated)*F/isolated_period + (1-dev_symp -test_asy)*A / asymptomatic_period #(1-prob_isolated_asy)*A / asymptomatic_period
+    derivD =   (1-prob_quarant) *I / infectious_period  + mortality_isolated*F / isolated_period
     return np.array([derivS, derivE, derivA, derivI, derivF, derivR, derivD])
 
 
