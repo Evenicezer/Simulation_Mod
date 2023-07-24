@@ -17,15 +17,16 @@ if __name__ == "__main__":
 
     contacts = 10           # number of contacts in standard case
     transmission_prob = 0.716  # transmission probability
-    exposed_period = 3       # Mean exposed period
+    exposed_period = 4.6       # Mean exposed period
     asymptomatic_period = 5  # Mean asymptomatic infectious period
     infectious_period = 7    # Mean infectious period
     isolated_period = 10 # Mean isolation
     reducing_transmission= 0.859
-    prob_asymptomatic = 0.2  # probability of being asymptomatic once exposed
+    prob_asymptomatic = 0.9  # probability of being asymptomatic once exposed# reference 46 p9
     prob_isolated_asy = 0.2  # probability of being
     prob_dead = 0.1          # probability of dying
-
+    test_asy= 0.135
+    dev_symp= 0.135 # which makes the (1-test_asy-dev_symp)=o.73
     tmax = 90  # maximum simulation day
 
     fslarge = 20
