@@ -1,9 +1,10 @@
 import numpy as np
 from typing import Protocol
 
-def derivative(X, t, contacts,transmission_prob, total_population,reducing_transmission,
+
+def derivative(t, X, contacts, transmission_prob, total_population, reducing_transmission,
                exposed_period, asymptomatic_period, infectious_period, isolated_period,
-               prob_asymptomatic,prob_quarant,test_asy,dev_symp,mortality_isolated):
+               prob_asymptomatic, prob_quarant_inf, test_asy, dev_symp, mortality_isolated, mortality_infected):
     '''
     An ODE-SEAIFRD model with possibly reduced risk from asymptomatic infected individuals.
 
@@ -26,13 +27,26 @@ def derivative(X, t, contacts,transmission_prob, total_population,reducing_trans
     @return Returns derivative of S, E, A, I, F, R, and D at t.
     '''
     S, E, A, I, F, R, D = X
-    derivS = - contacts*transmission_prob * S * (I + reducing_transmission*A) / total_population
-    derivE = contacts*transmission_prob * S * (I + reducing_transmission*A) / total_population -  E/exposed_period
+    derivS = - contacts * transmission_prob * S * (I + reducing_transmission * A) / total_population
+    derivE = contacts * transmission_prob * S * (I + reducing_transmission * A) / total_population - E / exposed_period
     derivA = prob_asymptomatic * E / exposed_period - A / asymptomatic_period
-    derivI = dev_symp  * E / exposed_period - I / infectious_period
-    derivF =  prob_quarant* I / infectious_period - F / isolated_period + test_asy*A/asymptomatic_period  #prob_isolated_asy*A/asymptomatic_period
-    derivR =   (1-mortality_isolated)*F/isolated_period + (1-dev_symp -test_asy)*A / asymptomatic_period #(1-prob_isolated_asy)*A / asymptomatic_period
-    derivD =   (1-prob_quarant) *I / infectious_period  + mortality_isolated*F / isolated_period
+    derivI = (1 - prob_asymptomatic) * E / exposed_period + dev_symp * A / asymptomatic_period - I / infectious_period  # +
+    derivF = prob_quarant_inf * I / infectious_period - F / isolated_period + test_asy * A / asymptomatic_period  # prob_isolated_asy*A/asymptomatic_period
+    derivR = (1 - prob_quarant_inf - mortality_infected) * I / infectious_period + (1 - mortality_isolated) * F / isolated_period + (1 - dev_symp - test_asy) * A / asymptomatic_period  # (1-prob_isolated_asy)*A / asymptomatic_period
+    derivD = (mortality_infected) * I / infectious_period + mortality_isolated * F / isolated_period
     return np.array([derivS, derivE, derivA, derivI, derivF, derivR, derivD])
 
+'''(\lambda#contacts),(\eta # reducing_transmission),
+(\alpha (α)# prob_asymtomatic), 
+(\beta (β)# tranmission_prob), 
+(\gamma (γ)#,dev_symp) ,(\delta (δ)# test_asy),\Delta (Δ) ,
+(\zeta#mortality_infected), (\kappa#prob_quarant_inf),
+(\epsilon#mortality_isolated)'''
 
+# total_population  - N
+# exposed_period  - theta----------tau 1
+# asymptomatic_period  - nu ---------tau 2
+# infectious_period    - xi--------tau 3
+# isolated_period    - Mu--------tau 4
+
+#+rho
