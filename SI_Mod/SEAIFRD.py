@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import integrate
-# from derivatives import derivative
 from Derivative import derivative
 
 if __name__ == "__main__":
@@ -14,7 +13,7 @@ if __name__ == "__main__":
     D0 = 0  # Initial number of death cases
     S0 = total_population - E0 - A0 - I0 - F0 - R0 - D0  # Susceptible individuals
 
-    contacts = 10  # number of contacts in standard case
+    contacts = 6  # number of contacts in standard case
     transmission_prob = 0.716  # transmission probability
     exposed_period = 4.6  # Mean exposed period
     asymptomatic_period = 2.17  # Mean asymptomatic infectious period# reference 46 p9
@@ -36,27 +35,27 @@ if __name__ == "__main__":
 
     t = np.linspace(0, tmax, (tmax + 1) * 10)
     fig, ax = plt.subplots(figsize=[12, 7])
-
-    solution_seaifrd = integrate.odeint(derivative, [S0, E0, A0, I0, F0, R0, D0], t,
+    initial_conditions = [S0, E0, A0, I0, F0, R0, D0]
+    solution_seaifrd = integrate.solve_ivp(derivative, [0, tmax],initial_conditions, t_eval=t,
                                         args=(contacts, transmission_prob, total_population, reducing_transmission,
                                               exposed_period, asymptomatic_period, infectious_period,
                                               isolated_period, prob_asymptomatic,
-                                              prob_quarant_inf, test_asy, dev_symp, mortality_isolated,mortality_infected), tfirst=True)
+                                              prob_quarant_inf, test_asy, dev_symp, mortality_isolated,mortality_infected), method='RK45')
 
-    total_infections = total_population - solution_seaifrd[-1, 0]
+    total_infections = total_population - solution_seaifrd.y[-1, 0]
 
-    ax.plot(t, solution_seaifrd[:, 0], label='Susceptible', linewidth=3)
-    ax.plot(t, solution_seaifrd[:, 1], label='Exposed', linewidth=3)
-    ax.plot(t, solution_seaifrd[:, 2], label='Asymptomatic Infectious', linewidth=3)
-    ax.plot(t, solution_seaifrd[:, 3], label='Infected Symptomatic', linewidth=3)
-    ax.plot(t, solution_seaifrd[:, 4], label='Isolation', linewidth=3)
-    ax.plot(t, solution_seaifrd[:, 5], label='Recovered', linewidth=3)
-    ax.plot(t, solution_seaifrd[:, 6], label='Death', linewidth=3)
+    ax.plot(t, solution_seaifrd.y[0], label='Susceptible', linewidth=3)
+    ax.plot(t, solution_seaifrd.y[1], label='Exposed', linewidth=3)
+    ax.plot(t, solution_seaifrd.y[2], label='Asymptomatic Infectious', linewidth=3)
+    ax.plot(t, solution_seaifrd.y[3], label='Infected Symptomatic', linewidth=3)
+    ax.plot(t, solution_seaifrd.y[4], label='Isolation', linewidth=3)
+    ax.plot(t, solution_seaifrd.y[5], label='Recovered', linewidth=3)
+    ax.plot(t, solution_seaifrd.y[6], label='Death', linewidth=3)
 
-    ax.set_xlabel('Days', fontsize=fslarge)
-    ax.set_ylabel('Number of individuals', fontsize=fslarge)
-    ax.set_title('Simulation of an ODE-SEAIFRD model', fontsize=fslarge)
-    ax.legend(fontsize=fssmall, loc='center left', bbox_to_anchor=(0.7, 0.5))#1,.5
+    ax.set_xlabel('Days', fontsize=20)
+    ax.set_ylabel('Number of individuals', fontsize=20)
+    ax.set_title('Simulation of an ODE-SEAIFRD model', fontsize=20)
+    ax.legend(fontsize=16, loc='center left', bbox_to_anchor=(0.7, 0.5))
 
     plt.savefig('Simulation_Model')
     plt.tight_layout()
